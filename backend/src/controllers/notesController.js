@@ -72,3 +72,30 @@ export async function deleteNode(req, res) {
         res.status(500).json({ message: "internal server error " })
     }
 }
+
+export async function cleanupDuplicates(req, res) {
+    try {
+        const notes = await Note.find()
+        const seen = {}
+        const toDelete = []
+
+        notes.forEach(note => {
+            const key = `${note.title}|${note.content}`
+            if (seen[key]) {
+                toDelete.push(note._id)
+            } else {
+                seen[key] = true
+            }
+        })
+
+        if (toDelete.length > 0) {
+            await Note.deleteMany({ _id: { $in: toDelete } })
+            res.status(200).json({ message: `Deleted ${toDelete.length} duplicate notes` })
+        } else {
+            res.status(200).json({ message: "No duplicates found" })
+        }
+    } catch (error) {
+        console.error("error in cleanup duplicates controller");
+        res.status(500).json({ message: "internal server error " })
+    }
+}
