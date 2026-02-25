@@ -1,11 +1,11 @@
 import React from 'react'
 
-const notedetailpage = () => {
+const NoteDetailPage = () => {
   return (
     <div>
-      
+      note page 
     </div>
   )
 }
 
-export default notedetailpage
+export default NoteDetailPage
